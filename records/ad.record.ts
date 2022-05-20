@@ -2,6 +2,7 @@ import {AdEntity, NewAddEntity, SimpleAddEntity} from "../types";
 import {pool} from "../utils/db";
 import {ValidationError} from "../utils/errors";
 import {FieldPacket} from "mysql2";
+import {v4 as uuid} from 'uuid';
 
 type AdRecordResults = [AdEntity[], FieldPacket[]]
 
@@ -39,12 +40,11 @@ export class AdRecord implements AdEntity {
         this.id = obj.id;
         this.name = obj.name;
         this.description = obj.description;
-        this.price - obj.price;
+        this.price = obj.price;
         this.url = obj.url;
         this.lat = obj.lat;
         this.lon = obj.lon;
     }
-
     static async getOne(id: string): Promise<AdRecord | null> {
         const [results]=await pool.execute("SELECT * FROM `ads` WHERE `id` =:id", {
             id,
@@ -68,5 +68,16 @@ export class AdRecord implements AdEntity {
                 id, lat, lon,
             }
         });
+    }
+
+    async insert(): Promise<void> {
+        if (!this.id){
+            this.id = uuid();
+        } else {
+            throw new Error("Cannot insert something that is already inserted!");
+        }
+        console.log(this);
+        await pool.execute("INSERT INTO `ads`(`id`, `name`, `description`,`price`, `url`, `lat`, `lon`) VALUES(:id, :name, :description,:price, :url, :lat, :lon )", this);
+
     }
 }

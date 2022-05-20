@@ -7,7 +7,6 @@ const defaultObj = {
     price: 0,
     lat: 0,
     lon: 0,
-
 }
 
 test('can build AdRecord', () => {
