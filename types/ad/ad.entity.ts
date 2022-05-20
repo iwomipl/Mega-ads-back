@@ -1,3 +1,7 @@
+export interface NewAddEntity extends Omit<AdEntity, 'id'> {
+    id?: string;
+}
+
 export interface AdEntity {
     id: string;
     name: string;
